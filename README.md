@@ -1,5 +1,5 @@
 ![Tests](https://github.com/SigmaHQ/pySigma-pipeline-sysmon/actions/workflows/test.yml/badge.svg)
-![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/thomaspatzke/9c695cb26aae10cb8107941388340ec1/raw/SigmaHQ-pySigma-pipeline-sysmon-coverage.json)
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/thomaspatzke/9c695cb26aae10cb8107941388340ec1/raw)
 ![Status](https://img.shields.io/badge/Status-pre--release-orange)
 
 # pySigma Sysmon Processing Pipeline
