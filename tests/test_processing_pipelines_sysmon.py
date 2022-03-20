@@ -5,12 +5,6 @@ from sigma.pipelines.sysmon import sysmon_pipeline
 import pytest
 
 @pytest.fixture
-def resolver():
-    return ProcessingPipelineResolver({
-        "sysmon": sysmon_pipeline,
-    })
-
-@pytest.fixture
 def process_creation_sigma_rule():
     return SigmaCollection.from_yaml("""
         title: Process Creation Test
@@ -54,17 +48,14 @@ def network_connection_sigma_rule():
             condition: sel
     """)
 
-def test_sysmon_process_creation(resolver : ProcessingPipelineResolver, process_creation_sigma_rule):
-    pipeline = resolver.resolve_pipeline("sysmon")
-    backend = TextQueryTestBackend(pipeline)
+def test_sysmon_process_creation(process_creation_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(process_creation_sigma_rule) == ["EventID=1 and CommandLine=\"test.exe foo bar\" and Image=\"*\\test.exe\""]
 
-def test_sysmon_file_change(resolver : ProcessingPipelineResolver, file_change_sigma_rule):
-    pipeline = resolver.resolve_pipeline("sysmon")
-    backend = TextQueryTestBackend(pipeline)
+def test_sysmon_file_change(file_change_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(file_change_sigma_rule) == ["EventID=2 and TargetFilename=\"test\""]
 
-def test_sysmon_network_connect(resolver : ProcessingPipelineResolver, network_connection_sigma_rule):
-    pipeline = resolver.resolve_pipeline("sysmon")
-    backend = TextQueryTestBackend(pipeline)
+def test_sysmon_network_connect(network_connection_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(network_connection_sigma_rule) == ["EventID=3 and Initiated=\"true\" and DestinationIp=\"1.2.3.4\""]
