@@ -156,7 +156,7 @@ def file_event_sigma_rule():
 @pytest.fixture
 def registry_event_sigma_rule():
     return SigmaCollection.from_yaml("""
-        title: Registry Add Test
+        title: Registry Event Test
         status: test
         logsource:
             category: registry_event
@@ -335,7 +335,7 @@ def test_sysmon_file_event(file_event_sigma_rule):
 
 def test_sysmon_registry_event(registry_event_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(registry_add_sigma_rule) == ["EventID in (12, 13, 14) and Image=\"test.exe\""]
+    assert backend.convert(registry_event_sigma_rule) == ["EventID in (12, 13, 14) and Image=\"test.exe\""]
 
 def test_sysmon_registry_add(registry_add_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
