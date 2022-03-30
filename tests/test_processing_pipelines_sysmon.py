@@ -4,6 +4,13 @@ from sigma.processing.resolver import ProcessingPipelineResolver
 from sigma.pipelines.sysmon import sysmon_pipeline
 import pytest
 
+#Missing category
+# "sysmon_status": [4,16]
+# "registry_event": [12,13,14]
+# "pipe_created": [17,18]
+# "wmi_event": [19,20,21]
+# "file_delete": [23,26]
+
 @pytest.fixture
 def process_creation_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -143,6 +150,20 @@ def file_event_sigma_rule():
         detection:
             sel:
                 TargetFilename: test.exe
+            condition: sel
+    """)
+
+@pytest.fixture
+def registry_event_sigma_rule():
+    return SigmaCollection.from_yaml("""
+        title: Registry Add Test
+        status: test
+        logsource:
+            category: registry_event
+            product: windows
+        detection:
+            sel:
+                Image: test.exe
             condition: sel
     """)
     
@@ -311,6 +332,10 @@ def test_sysmon_process_access(process_access_sigma_rule):
 def test_sysmon_file_event(file_event_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(file_event_sigma_rule) == ["EventID=11 and TargetFilename=\"test.exe\""]
+
+def test_sysmon_registry_event(registry_event_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(registry_add_sigma_rule) == ["EventID in (12, 13, 14) and Image=\"test.exe\""]
 
 def test_sysmon_registry_add(registry_add_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())

@@ -7,6 +7,7 @@ sysmon_generic_logsource_eventid_mapping = {    # map generic Sigma log sources 
     "file_change": 2,
     "network_connection": 3,
     "process_termination": 5,
+    "sysmon_status": [4,16],
     "driver_load": 6,
     "image_load": 7,
     "create_remote_thread": 8,
@@ -17,18 +18,17 @@ sysmon_generic_logsource_eventid_mapping = {    # map generic Sigma log sources 
     "registry_delete": 12,
     "registry_set": 13,
     "registry_rename": 14,
+    "registry_event": [12,13,14],
     "create_stream_hash": 15,
+    "pipe_created": [17,18],
+    "wmi_event": [19,20,21],
     "dns_query": 22,
+    "file_delete": [23,26],
     "clipboard_capture": 24,
     "process_tampering": 25,
     "sysmon_error": 255,
 }
-#Missing category
-# "sysmon_status": [4,16]
-# "registry_event": [12,13,14]
-# "pipe_created": [17,18]
-# "wmi_event": [19,20,21]
-# "file_delete": [23,26]
+
 
 def sysmon_pipeline():
     return ProcessingPipeline(
