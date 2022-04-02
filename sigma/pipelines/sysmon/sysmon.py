@@ -51,7 +51,7 @@ def sysmon_pipeline():
                     ]
                 ),
                 ProcessingItem(
-                    identifier="sysmon_process_creation_logsource",
+                    identifier="sysmon_{log_source}_logsource",
                     transformation=ChangeLogsourceTransformation(
                         product="windows",
                         service="sysmon",

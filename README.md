@@ -11,6 +11,27 @@ Currently the pipeline adds support for the following event types (Sigma logsour
 * process_creation: 1
 * file_change: 2
 * network_connection: 3
+* process_termination: 5
+* sysmon_status: 4,16
+* driver_load: 6
+* image_load: 7
+* create_remote_thread: 8
+* raw_access_thread: 9
+* process_access: 10
+* file_event: 11
+* registry_add: 12
+* registry_delete: 12
+* registry_set: 13
+* registry_rename: 14
+* registry_event: 12,13,14
+* create_stream_hash: 15
+* pipe_created: 17,18
+* wmi_event: 19,20,21
+* dns_query: 22
+* file_delete: 23,26
+* clipboard_capture: 24
+* process_tampering: 25
+* sysmon_error: 255
 
 This backend is currently maintained by:
 
