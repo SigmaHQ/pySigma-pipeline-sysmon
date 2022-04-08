@@ -138,7 +138,7 @@ def process_access_sigma_rule():
                 TargetImage: test.exe
             condition: sel
     """)
-    
+
 @pytest.fixture
 def file_event_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -166,7 +166,7 @@ def registry_event_sigma_rule():
                 Image: test.exe
             condition: sel
     """)
-    
+
 @pytest.fixture
 def registry_add_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -208,7 +208,7 @@ def registry_set_sigma_rule():
                 Image: test.exe
             condition: sel
     """)
-    
+
 @pytest.fixture
 def registry_rename_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -222,7 +222,7 @@ def registry_rename_sigma_rule():
                 Image: test.exe
             condition: sel
     """)
-    
+
 @pytest.fixture
 def create_stream_hash_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -236,7 +236,7 @@ def create_stream_hash_sigma_rule():
                 Image: test.exe
             condition: sel
     """)
-    
+
 @pytest.fixture
 def dns_query_sigma_rule():
     return SigmaCollection.from_yaml("""
@@ -263,7 +263,7 @@ def clipboard_capture_sigma_rule():
             sel:
                 Image: test.exe
             condition: sel
-    """)    
+    """)
 
 @pytest.fixture
 def process_tampering_sigma_rule():
@@ -291,7 +291,7 @@ def sysmon_error_sigma_rule():
             sel:
                 Description: a error is here
             condition: sel
-    """) 
+    """)
 
 def test_sysmon_process_creation(process_creation_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
@@ -311,15 +311,15 @@ def test_sysmon_process_termination(process_termination_sigma_rule):
 
 def test_sysmon_driver_load(driver_load_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(driver_load_sigma_rule) == ["EventID=6 and ImageLoaded=\"test.exe\""]    
+    assert backend.convert(driver_load_sigma_rule) == ["EventID=6 and ImageLoaded=\"test.exe\""]
 
 def test_sysmon_image_load(image_load_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(image_load_sigma_rule) == ["EventID=7 and ImageLoaded=\"test.exe\""] 
+    assert backend.convert(image_load_sigma_rule) == ["EventID=7 and ImageLoaded=\"test.exe\""]
 
 def test_sysmon_create_remote_thread(create_remote_thread_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(create_remote_thread_sigma_rule) == ["EventID=8 and SourceImage=\"test.exe\""] 
+    assert backend.convert(create_remote_thread_sigma_rule) == ["EventID=8 and SourceImage=\"test.exe\""]
 
 def test_sysmon_raw_access_thread(raw_access_thread_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
@@ -335,7 +335,7 @@ def test_sysmon_file_event(file_event_sigma_rule):
 
 def test_sysmon_registry_event(registry_event_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(registry_event_sigma_rule) == ["EventID in (12, 13, 14) and Image=\"test.exe\""]
+    assert backend.convert(registry_event_sigma_rule) == ["(EventID in (12, 13, 14)) and Image=\"test.exe\""]
 
 def test_sysmon_registry_add(registry_add_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
@@ -363,12 +363,12 @@ def test_sysmon_dns_query(dns_query_sigma_rule):
 
 def test_sysmon_clipboard_capture(clipboard_capture_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(clipboard_capture_sigma_rule) == ["EventID=24 and Image=\"test.exe\""]  
+    assert backend.convert(clipboard_capture_sigma_rule) == ["EventID=24 and Image=\"test.exe\""]
 
 def test_sysmon_process_tampering(process_tampering_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(process_tampering_sigma_rule) == ["EventID=25 and Image=\"test.exe\""] 
-    
+    assert backend.convert(process_tampering_sigma_rule) == ["EventID=25 and Image=\"test.exe\""]
+
 def test_sysmon_sysmon_error(sysmon_error_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(sysmon_error_sigma_rule) == ["EventID=255 and Description=\"a error is here\""]
