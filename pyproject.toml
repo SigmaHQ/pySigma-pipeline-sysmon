@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pysigma-pipeline-sysmon"
-version = "0.1.5"
+version = "0.1.6"
 description = "pySigma Sysmon processing pipelines"
 authors = ["Thomas Patzke <thomas@patzke.org>"]
 license = "LGPL-2.1-only"
@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pysigma = "^0.5.0"
+pysigma = "^0.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
