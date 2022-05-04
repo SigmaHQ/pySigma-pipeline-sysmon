@@ -4,6 +4,7 @@ version = "0.1.6"
 description = "pySigma Sysmon processing pipelines"
 authors = ["Thomas Patzke <thomas@patzke.org>"]
 license = "LGPL-2.1-only"
+repository = "https://github.com/SigmaHQ/pySigma-pipeline-sysmon/"
 packages = [
     { include = "sigma" }
 ]
