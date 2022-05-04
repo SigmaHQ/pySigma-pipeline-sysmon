@@ -295,7 +295,7 @@ def sysmon_error_sigma_rule():
 
 def test_sysmon_process_creation(process_creation_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
-    assert backend.convert(process_creation_sigma_rule) == ["EventID=1 and CommandLine=\"test.exe foo bar\" and Image=\"*\\test.exe\""]
+    assert backend.convert(process_creation_sigma_rule) == ["EventID=1 and CommandLine=\"test.exe foo bar\" and Image endswith \"\\test.exe\""]
 
 def test_sysmon_file_change(file_change_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
