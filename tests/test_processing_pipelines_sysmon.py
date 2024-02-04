@@ -4,9 +4,6 @@ from sigma.processing.resolver import ProcessingPipelineResolver
 from sigma.pipelines.sysmon import sysmon_pipeline
 import pytest
 
-# Missing category
-# "file_delete": [23,26]
-
 
 @pytest.fixture
 def process_creation_sigma_rule():
