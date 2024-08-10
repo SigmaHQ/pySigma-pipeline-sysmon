@@ -647,7 +647,7 @@ def test_sysmon_wmi_event(sysmon_wmi_event_sigma_rule):
 def test_sysmon_file_delete(sysmon_file_delete_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(sysmon_file_delete_sigma_rule) == [
-        '(EventID in (23, 26)) and TargetFilename="a file name is here"'
+        'EventID=23 and TargetFilename="a file name is here"'
     ]
 
 
