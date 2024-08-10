@@ -415,6 +415,74 @@ def sysmon_file_delete_sigma_rule():
     )
 
 
+@pytest.fixture
+def sysmon_file_delete_detected_rule():
+    return SigmaCollection.from_yaml(
+        """
+        title: Sysmon File Delete Detected Test
+        status: test
+        logsource:
+            category: file_delete_detected
+            product: windows
+        detection:
+            sel:
+                TargetFilename: a file name is here
+            condition: sel
+    """
+    )
+
+
+@pytest.fixture
+def sysmon_file_block_executable_rule():
+    return SigmaCollection.from_yaml(
+        """
+        title: Sysmon File Block Executable Test
+        status: test
+        logsource:
+            category: file_block_executable
+            product: windows
+        detection:
+            sel:
+                TargetFilename: a file name is here
+            condition: sel
+    """
+    )
+
+
+@pytest.fixture
+def sysmon_file_block_shredding_rule():
+    return SigmaCollection.from_yaml(
+        """
+        title: Sysmon File Block Shredding Test
+        status: test
+        logsource:
+            category: file_block_shredding
+            product: windows
+        detection:
+            sel:
+                TargetFilename: a file name is here
+            condition: sel
+    """
+    )
+
+
+@pytest.fixture
+def sysmon_file_executable_detected_rule():
+    return SigmaCollection.from_yaml(
+        """
+        title: Sysmon File Executable Detected Test
+        status: test
+        logsource:
+            category: file_executable_detected
+            product: windows
+        detection:
+            sel:
+                TargetFilename: a file name is here
+            condition: sel
+    """
+    )
+
+
 def test_sysmon_process_creation(process_creation_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(process_creation_sigma_rule) == [
@@ -580,4 +648,32 @@ def test_sysmon_file_delete(sysmon_file_delete_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(sysmon_file_delete_sigma_rule) == [
         '(EventID in (23, 26)) and TargetFilename="a file name is here"'
+    ]
+
+
+def test_sysmon_file_delete_detected(sysmon_file_delete_detected_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(sysmon_file_delete_detected_rule) == [
+        'EventID=26 and TargetFilename="a file name is here"'
+    ]
+
+
+def test_sysmon_file_block_executable(sysmon_file_block_executable_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(sysmon_file_block_executable_rule) == [
+        'EventID=27 and TargetFilename="a file name is here"'
+    ]
+
+
+def test_sysmon_file_block_shredding(sysmon_file_block_shredding_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(sysmon_file_block_shredding_rule) == [
+        'EventID=28 and TargetFilename="a file name is here"'
+    ]
+
+
+def test_sysmon_file_executable_detected(sysmon_file_executable_detected_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(sysmon_file_executable_detected_rule) == [
+        'EventID=29 and TargetFilename="a file name is here"'
     ]
