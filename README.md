@@ -4,7 +4,7 @@
 
 # pySigma Sysmon Processing Pipeline
 
-This is the Sysmon processing pipeline for pySigma. It provides the package `sigma.pipeline.sysmon` with the `sysmon_pipeline` function that returns a ProcessingPipeline object.
+This is the [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) processing pipeline for pySigma. It provides the package `sigma.pipeline.sysmon` with the `sysmon_pipeline` function that returns a ProcessingPipeline object.
 
 Currently the pipeline adds support for the following event types (Sigma logsource category to EventID mapping):
 
@@ -32,9 +32,9 @@ Currently the pipeline adds support for the following event types (Sigma logsour
 * clipboard_capture: 24
 * process_tampering: 25
 * sysmon_error: 255
-* file_delete_detected: 26,
-* file_block_executable: 27,
-* file_block_shredding: 28,
+* file_delete_detected: 26
+* file_block_executable: 27
+* file_block_shredding: 28
 * file_executable_detected: 29
 
 This backend is currently maintained by:
