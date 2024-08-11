@@ -31,11 +31,11 @@ Currently the pipeline adds support for the following event types (Sigma logsour
 * file_delete: 23
 * clipboard_capture: 24
 * process_tampering: 25
-* sysmon_error: 255
 * file_delete_detected: 26
 * file_block_executable: 27
 * file_block_shredding: 28
 * file_executable_detected: 29
+* sysmon_error: 255
 
 This backend is currently maintained by:
 
