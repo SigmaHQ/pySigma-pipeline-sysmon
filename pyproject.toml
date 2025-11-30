@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pysigma-pipeline-sysmon"
-version = "1.0.5"
+version = "2.0.0"
 description = "pySigma Sysmon processing pipelines"
 readme = "README.md"
 authors = ["Thomas Patzke <thomas@patzke.org>"]
@@ -11,15 +11,15 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-pysigma = "^0.11"
+python = "^3.10"
+pysigma = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
-black = "^24.1"
-pytest = "^8.0"
-pytest-cov = "^4.1"
+black = "^24.10"
+pytest = "^8.3"
+pytest-cov = "^6.0"
 defusedxml = "^0.7"
 
 [build-system]
-requires = ["poetry-core>=1.8.1"]
+requires = ["poetry-core>=1.9.0"]
 build-backend = "poetry.core.masonry.api"
