@@ -677,3 +677,37 @@ def test_sysmon_file_executable_detected(sysmon_file_executable_detected_rule):
     assert backend.convert(sysmon_file_executable_detected_rule) == [
         'EventID=29 and TargetFilename="a file name is here"'
     ]
+
+
+def sysmon_channel_pipeline():
+    # Stand-in for a priority-10 companion pipeline (e.g. windows-logsources) that adds the
+    # Channel condition for service: sysmon, registered under a name sorting before "sysmon".
+    from sigma.processing.conditions import LogsourceCondition
+    from sigma.processing.pipeline import ProcessingItem, ProcessingPipeline
+    from sigma.processing.transformations import AddConditionTransformation
+
+    return ProcessingPipeline(
+        name="Sysmon channel",
+        priority=10,
+        items=[
+            ProcessingItem(
+                transformation=AddConditionTransformation(
+                    {"Channel": "Microsoft-Windows-Sysmon/Operational"}
+                ),
+                rule_conditions=[
+                    LogsourceCondition(product="windows", service="sysmon")
+                ],
+            )
+        ],
+    )
+
+
+def test_sysmon_runs_before_channel_pipelines(process_creation_sigma_rule):
+    resolver = ProcessingPipelineResolver(
+        {"sysmon": sysmon_pipeline, "a_channel": sysmon_channel_pipeline}
+    )
+    pipeline = resolver.resolve(["sysmon", "a_channel"])
+    assert TextQueryTestBackend(pipeline).convert(process_creation_sigma_rule) == [
+        'Channel="Microsoft-Windows-Sysmon/Operational" and EventID=1 and '
+        'CommandLine="test.exe foo bar" and Image endswith "\\test.exe"'
+    ]

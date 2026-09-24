@@ -44,7 +44,9 @@ sysmon_generic_logsource_eventid_mapping = (
 def sysmon_pipeline() -> ProcessingPipeline:
     return ProcessingPipeline(
         name="Generic Log Sources to Sysmon Transformation",
-        priority=10,
+        # Must run strictly before the priority-10 pipelines (e.g. windows-logsources) that add
+        # the Channel condition for the service: sysmon log source this pipeline sets.
+        priority=5,
         items=[
             processing_item
             for log_source, event_id in sysmon_generic_logsource_eventid_mapping.items()
