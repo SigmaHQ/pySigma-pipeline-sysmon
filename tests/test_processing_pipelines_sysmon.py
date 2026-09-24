@@ -563,14 +563,14 @@ def test_sysmon_registry_event(registry_event_sigma_rule):
 def test_sysmon_registry_add(registry_add_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(registry_add_sigma_rule) == [
-        'EventID=12 and Image="test.exe"'
+        'EventID=12 and EventType="CreateKey" and Image="test.exe"'
     ]
 
 
 def test_sysmon_registry_delete(registry_delete_sigma_rule):
     backend = TextQueryTestBackend(sysmon_pipeline())
     assert backend.convert(registry_delete_sigma_rule) == [
-        'EventID=12 and Image="test.exe"'
+        'EventID=12 and (EventType in ("DeleteKey", "DeleteValue")) and Image="test.exe"'
     ]
 
 
