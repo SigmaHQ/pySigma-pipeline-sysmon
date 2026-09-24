@@ -677,3 +677,69 @@ def test_sysmon_file_executable_detected(sysmon_file_executable_detected_rule):
     assert backend.convert(sysmon_file_executable_detected_rule) == [
         'EventID=29 and TargetFilename="a file name is here"'
     ]
+
+
+def process_creation_rule_with_service(service):
+    return SigmaCollection.from_yaml(
+        f"""
+        title: Process Creation Test
+        status: test
+        logsource:
+            category: process_creation
+            product: windows
+            service: {service}
+        detection:
+            sel:
+                CommandLine: "test.exe foo bar"
+            condition: sel
+    """
+    )
+
+
+def test_sysmon_keeps_explicit_non_sysmon_service():
+    rules = process_creation_rule_with_service("security")
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(rules) == ['CommandLine="test.exe foo bar"']
+    assert rules.rules[0].logsource.service == "security"
+
+
+def test_sysmon_correlation_rule():
+    rules = SigmaCollection.from_yaml(
+        """
+title: Process Creation Test
+name: proc
+status: test
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    sel:
+        CommandLine: "test.exe foo bar"
+    condition: sel
+---
+title: Correlation Test
+status: test
+correlation:
+    type: event_count
+    rules:
+        - proc
+    group-by:
+        - ComputerName
+    timespan: 1h
+    condition:
+        gte: 10
+    """
+    )
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(rules) == [
+        'EventID=1 and CommandLine="test.exe foo bar"\n'
+        "| aggregate window=1h count() as event_count by ComputerName\n"
+        "| where event_count >= 10"
+    ]
+
+
+def test_sysmon_explicit_sysmon_service():
+    rules = process_creation_rule_with_service("sysmon")
+    backend = TextQueryTestBackend(sysmon_pipeline())
+    assert backend.convert(rules) == ['EventID=1 and CommandLine="test.exe foo bar"']
+    assert rules.rules[0].logsource.service == "sysmon"

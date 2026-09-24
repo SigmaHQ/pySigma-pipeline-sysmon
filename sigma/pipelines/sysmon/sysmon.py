@@ -1,10 +1,30 @@
+from dataclasses import dataclass
+from typing import Union
+
+from sigma.correlations import SigmaCorrelationRule
+from sigma.rule import SigmaRule
 from sigma.processing.transformations import (
     AddConditionTransformation,
     ChangeLogsourceTransformation,
 )
-from sigma.processing.conditions import LogsourceCondition
+from sigma.processing.conditions import LogsourceCondition, RuleProcessingCondition
 from sigma.processing.pipeline import ProcessingItem, ProcessingPipeline
 from sigma.pipelines.base import Pipeline
+
+
+@dataclass
+class SysmonServiceCondition(RuleProcessingCondition):
+    """
+    Matches rules whose log source has no service or the sysmon service. LogsourceCondition treats
+    an unset service as "any service", so a rule with an explicit other service (e.g. security)
+    would otherwise be rewritten to Sysmon.
+    """
+
+    def match(self, rule: Union[SigmaRule, SigmaCorrelationRule]) -> bool:
+        if isinstance(rule, SigmaRule):
+            return rule.logsource.service in (None, "sysmon")
+        return True
+
 
 sysmon_generic_logsource_eventid_mapping = (
     {  # map generic Sigma log sources to Sysmon event ids
@@ -57,7 +77,8 @@ def sysmon_pipeline() -> ProcessingPipeline:
                         }
                     ),
                     rule_conditions=[
-                        LogsourceCondition(category=log_source, product="windows")
+                        LogsourceCondition(category=log_source, product="windows"),
+                        SysmonServiceCondition(),
                     ],
                 ),
                 ProcessingItem(
@@ -68,7 +89,8 @@ def sysmon_pipeline() -> ProcessingPipeline:
                         category=log_source,
                     ),
                     rule_conditions=[
-                        LogsourceCondition(category=log_source, product="windows")
+                        LogsourceCondition(category=log_source, product="windows"),
+                        SysmonServiceCondition(),
                     ],
                 ),
             )
