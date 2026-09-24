@@ -677,3 +677,33 @@ def test_sysmon_file_executable_detected(sysmon_file_executable_detected_rule):
     assert backend.convert(sysmon_file_executable_detected_rule) == [
         'EventID=29 and TargetFilename="a file name is here"'
     ]
+
+
+def test_sysmon_pipeline_not_aliased_by_other_pipeline_decorator():
+    # pySigma's @Pipeline decorator is a process-wide singleton: decorating another pipeline
+    # function after sysmon_pipeline must not change what sysmon_pipeline() returns.
+    from sigma.pipelines.base import Pipeline
+    from sigma.processing.pipeline import ProcessingPipeline
+
+    singleton = getattr(Pipeline, "_instance", None)
+    saved_func = getattr(singleton, "func", None)
+    try:
+
+        @Pipeline
+        def other_pipeline() -> ProcessingPipeline:
+            return ProcessingPipeline(name="Other pipeline", items=[])
+
+        assert sysmon_pipeline().name == "Generic Log Sources to Sysmon Transformation"
+    finally:
+        if singleton is not None:
+            singleton.func = saved_func
+
+
+def test_sysmon_pipeline_autodiscovered(process_creation_sigma_rule):
+    from sigma.plugins import InstalledSigmaPlugins
+
+    pipeline = InstalledSigmaPlugins.autodiscover().pipelines["sysmon"]()
+    assert pipeline.name == "Generic Log Sources to Sysmon Transformation"
+    assert TextQueryTestBackend(pipeline).convert(process_creation_sigma_rule) == [
+        'EventID=1 and CommandLine="test.exe foo bar" and Image endswith "\\test.exe"'
+    ]
