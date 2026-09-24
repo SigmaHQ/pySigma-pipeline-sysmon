@@ -677,3 +677,10 @@ def test_sysmon_file_executable_detected(sysmon_file_executable_detected_rule):
     assert backend.convert(sysmon_file_executable_detected_rule) == [
         'EventID=29 and TargetFilename="a file name is here"'
     ]
+
+
+def test_sysmon_idempotent(process_creation_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline() + sysmon_pipeline())
+    assert backend.convert(process_creation_sigma_rule) == [
+        'EventID=1 and CommandLine="test.exe foo bar" and Image endswith "\\test.exe"'
+    ]
