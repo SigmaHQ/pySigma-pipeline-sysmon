@@ -685,19 +685,18 @@ def test_sysmon_pipeline_not_aliased_by_other_pipeline_decorator():
     from sigma.pipelines.base import Pipeline
     from sigma.processing.pipeline import ProcessingPipeline
 
-    singleton = getattr(Pipeline, "_instance", None)
-    saved_func = getattr(singleton, "func", None)
+    saved_instance = getattr(Pipeline, "_instance", None)
+    saved_func = getattr(saved_instance, "func", None)
     try:
-
         @Pipeline
         def other_pipeline() -> ProcessingPipeline:
             return ProcessingPipeline(name="Other pipeline", items=[])
 
         assert sysmon_pipeline().name == "Generic Log Sources to Sysmon Transformation"
     finally:
-        if singleton is not None:
-            singleton.func = saved_func
-
+        Pipeline._instance = saved_instance
+        if saved_instance is not None:
+            saved_instance.func = saved_func
 
 def test_sysmon_pipeline_autodiscovered(process_creation_sigma_rule):
     from sigma.plugins import InstalledSigmaPlugins
