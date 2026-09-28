@@ -9,7 +9,6 @@ from sigma.processing.transformations import (
 )
 from sigma.processing.conditions import LogsourceCondition, RuleProcessingCondition
 from sigma.processing.pipeline import ProcessingItem, ProcessingPipeline
-from sigma.pipelines.base import Pipeline
 
 
 @dataclass
@@ -60,7 +59,9 @@ sysmon_generic_logsource_eventid_mapping = (
 )
 
 
-@Pipeline
+# Deliberately not decorated with @Pipeline: that decorator is a process-wide singleton in
+# pySigma, so every decorated function aliases the same object and the last one decorated
+# wins. Plugin autodiscovery finds this function through its ProcessingPipeline return type.
 def sysmon_pipeline() -> ProcessingPipeline:
     return ProcessingPipeline(
         name="Generic Log Sources to Sysmon Transformation",
