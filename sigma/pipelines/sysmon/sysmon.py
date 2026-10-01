@@ -2,8 +2,35 @@ from sigma.processing.transformations import (
     AddConditionTransformation,
     ChangeLogsourceTransformation,
 )
-from sigma.processing.conditions import LogsourceCondition
+from dataclasses import dataclass
+from typing import Union
+
+from sigma.correlations import SigmaCorrelationRule
+from sigma.rule import SigmaRule
+from sigma.processing.conditions import LogsourceCondition, RuleProcessingCondition
 from sigma.processing.pipeline import ProcessingItem, ProcessingPipeline
+
+
+@dataclass
+class RuleNotProcessedByCondition(RuleProcessingCondition):
+    """
+    Matches rules that were not yet processed by the given processing item. After the log source
+    was rewritten to service: sysmon it still matches the generic log source condition, so without
+    this a second pass of the pipeline would add the EventID condition again.
+    """
+
+    processing_item_id: str
+
+    def match(self, rule: Union[SigmaRule, SigmaCorrelationRule]) -> bool:
+        return not rule.was_processed_by(self.processing_item_id)
+
+
+def _sysmon_rule_conditions(log_source: str) -> list[RuleProcessingCondition]:
+    return [
+        LogsourceCondition(category=log_source, product="windows"),
+        RuleNotProcessedByCondition(f"sysmon_{log_source}_logsource"),
+    ]
+
 
 sysmon_generic_logsource_eventid_mapping = (
     {  # map generic Sigma log sources to Sysmon event ids
@@ -59,9 +86,7 @@ def sysmon_pipeline() -> ProcessingPipeline:
                             "EventID": event_id,
                         }
                     ),
-                    rule_conditions=[
-                        LogsourceCondition(category=log_source, product="windows")
-                    ],
+                    rule_conditions=_sysmon_rule_conditions(log_source),
                 ),
                 ProcessingItem(
                     identifier=f"sysmon_{log_source}_logsource",
@@ -70,9 +95,7 @@ def sysmon_pipeline() -> ProcessingPipeline:
                         service="sysmon",
                         category=log_source,
                     ),
-                    rule_conditions=[
-                        LogsourceCondition(category=log_source, product="windows")
-                    ],
+                    rule_conditions=_sysmon_rule_conditions(log_source),
                 ),
             )
         ],
