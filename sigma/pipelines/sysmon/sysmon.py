@@ -38,6 +38,13 @@ sysmon_generic_logsource_eventid_mapping = (
     }
 )
 
+# Sysmon event ID 12 covers both registry object creation and deletion; its EventType field tells
+# them apart (CreateKey, DeleteKey or DeleteValue; value creation is event ID 13, SetValue).
+sysmon_generic_logsource_additional_conditions = {
+    "registry_add": {"EventType": "CreateKey"},
+    "registry_delete": {"EventType": ["DeleteKey", "DeleteValue"]},
+}
+
 
 # Deliberately not decorated with @Pipeline: that decorator is a process-wide singleton in
 # pySigma, so every decorated function aliases the same object and the last one decorated
@@ -57,6 +64,9 @@ def sysmon_pipeline() -> ProcessingPipeline:
                     transformation=AddConditionTransformation(
                         {
                             "EventID": event_id,
+                            **sysmon_generic_logsource_additional_conditions.get(
+                                log_source, {}
+                            ),
                         }
                     ),
                     rule_conditions=[

@@ -19,8 +19,8 @@ Currently the pipeline adds support for the following event types (Sigma logsour
 * raw_access_thread: 9
 * process_access: 10
 * file_event: 11
-* registry_add: 12
-* registry_delete: 12
+* registry_add: 12 (EventType: CreateKey)
+* registry_delete: 12 (EventType: DeleteKey, DeleteValue)
 * registry_set: 13
 * registry_rename: 14
 * registry_event: 12,13,14
