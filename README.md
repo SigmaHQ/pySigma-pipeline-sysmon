@@ -37,6 +37,13 @@ Currently the pipeline adds support for the following event types (Sigma logsour
 * file_executable_detected: 29
 * sysmon_error: 255
 
+The pipeline only adds the EventID condition and changes the log source to `service: sysmon`. The
+Channel condition must come from a pipeline that handles `service: sysmon` (for example
+`windows-logsources`). This pipeline has priority 5 so that the processing pipeline resolver (used by
+`sigma convert -p ...`) always runs it before such priority-10 pipelines. Concatenating pipelines
+with `+` ignores priorities, so in Python put `sysmon_pipeline()` first
+(`sysmon_pipeline() + windows_logsource_pipeline()`), otherwise the Channel condition is lost.
+
 This backend is currently maintained by:
 
 * [Thomas Patzke](https://github.com/thomaspatzke/)
