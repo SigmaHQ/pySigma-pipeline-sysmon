@@ -740,3 +740,10 @@ def test_sysmon_runs_before_channel_pipelines(process_creation_sigma_rule):
         'Channel="Microsoft-Windows-Sysmon/Operational" and EventID=1 and '
         'CommandLine="test.exe foo bar" and Image endswith "\\test.exe"'
     ]
+
+
+def test_sysmon_idempotent(process_creation_sigma_rule):
+    backend = TextQueryTestBackend(sysmon_pipeline() + sysmon_pipeline())
+    assert backend.convert(process_creation_sigma_rule) == [
+        'EventID=1 and CommandLine="test.exe foo bar" and Image endswith "\\test.exe"'
+    ]
