@@ -6,6 +6,14 @@
 
 This is the [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) processing pipeline for pySigma. It provides the package `sigma.pipeline.sysmon` with the `sysmon_pipeline` function that returns a ProcessingPipeline object.
 
+Only rules with `product: windows` and one of the categories listed below are transformed. Rules with
+any other log source (for example the Windows categories `file_access`, `file_rename` and the
+PowerShell `ps_*` categories, which Sysmon does not log) are passed through unchanged: no EventID
+condition is added, the log source is not changed and no error is raised. Unless another pipeline in
+the chain handles these log sources, the generated query contains only the rule's own detection
+logic (e.g. `CommandLine="foo"`) and is not restricted to any event source. Select rules by log source
+before conversion if your data only contains Sysmon events.
+
 Currently the pipeline adds support for the following event types (Sigma logsource category to EventID mapping):
 
 * process_creation: 1
